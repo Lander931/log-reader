@@ -1,0 +1,23 @@
+[2018-01-01 00:00:01] This is log 1.
+Stack trace:
+#0 Trace 1
+#1 Trace 2
+#2 Trace 3
+#3 Trace 4
+#4 Trace 5
+[2018-01-01 00:00:02] This is log 2.
+Stack trace:
+#0 Trace 1
+#1 Trace 2
+#2 Trace 3
+#3 Trace 4
+#4 Trace 5
+[2018-01-01 00:00:03] This is log 3.
+Stack trace:
+#0 Trace 1
+#1 Trace 2
+#2 Trace 3
+#3 Trace 4
+#4 Trace 5
+[2018-01-01 00:00:04] This is log 4.
+[2018-01-01 00:00:05] This is log 5.

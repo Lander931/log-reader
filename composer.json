@@ -1,0 +1,33 @@
+{
+  "name":        "lander931/log-reader",
+  "description": "Log Reader",
+  "keywords":    ["log", "log reader", "log-reader", "logreader", "log parser", "log-parser", "logparsser"],
+  "homepage":    "https://github.com/Lander931/log-reader",
+  "authors": [
+    {
+      "name":     "Dmitry Chekanov",
+      "email":    "lander931@mail.ru",
+      "homepage": "https://github.com/Lander931",
+      "role":     "Developer"
+    }
+  ],
+  "type":    "library",
+  "license": "MIT",
+  "require": {
+    "php": ">=5.4"
+  },
+  "require-dev": {
+    "php": "^5.4",
+    "phpunit/phpunit": "^4"
+  },
+  "autoload": {
+    "psr-4": {
+      "Lander931\\LogReader\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Lander931\\LogReader\\Tests\\": "tests/"
+    }
+  }
+}
