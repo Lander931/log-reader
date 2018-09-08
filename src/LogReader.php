@@ -33,14 +33,13 @@ class LogReader
     }
 
     /**
-     * @param string $name
      * @param callable $callable
      * @return $this
      */
-    public function addField($name, $callable)
+    public function buildEntries(callable $callable)
     {
         foreach ($this->split_logs as $key => $split_log) {
-            $this->data[$key][$name] = is_callable($callable) ? $callable($split_log) : $callable;
+            $this->data[$key] = $callable($split_log);
         }
         return $this;
     }
