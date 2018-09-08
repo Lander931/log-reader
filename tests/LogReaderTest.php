@@ -3,6 +3,8 @@
 namespace Lander931\LogReader\Tests;
 
 use Lander931\LogReader\LogReader;
+use Lander931\LogReader\Tests\Entities\LogEntity;
+
 class LogReaderTest extends \PHPUnit_Framework_TestCase
 {
     private $log_file;
@@ -40,32 +42,31 @@ class LogReaderTest extends \PHPUnit_Framework_TestCase
         });
     }
 
-    public function testAddField()
+    public function testBuildEntries()
     {
         $reader = clone $this->reader;
 
-        $reader
-            ->addField('test_field', 'test_value')
-            ->addField('date', function ($log) {
-                return self::parseDate($log);
-            })
-            ->addField('stack', function ($log) {
-                return self::parseStack($log);
-            })
-            ->addField('text', function ($log) {
-                return $log;
-            });
+        $reader->buildEntries(function ($log) {
+            $pattern = "/\[(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2})\] (?>(.+)\sStack trace:\s(.+)|(.+))/sm";
+            preg_match_all($pattern, $log, $matches, PREG_SET_ORDER);
+
+            $date = $matches[0][1];
+            $time = $matches[0][2];
+            $message = ($matches[0][3]) ? $matches[0][3] : ((isset($matches[0][5]) && $matches[0][5]) ? $matches[0][5] : null);
+            $stack = ($matches[0][4]) ? $matches[0][4] : null;
+
+            if ($message) $message = trim($message);
+            if ($stack) $stack = trim($stack);
+
+            return new LogEntity($date, $time, $message, $stack);
+        });
 
         $entries = $reader->getEntries();
 
         $this->assertInternalType('array', $entries);
         $this->assertTrue(count($entries) > 0);
         foreach ($entries as $entry) {
-            $this->assertInternalType('array', $entry);
-            $this->assertArrayHasKey('date', $entry);
-            $this->assertArrayHasKey('stack', $entry);
-            $this->assertArrayHasKey('text', $entry);
-            if (strpos($entry['text'], 'Stack trace') === false) $this->assertEmpty($entry['stack']);
+            $this->assertEquals('Lander931\LogReader\Tests\Entities\LogEntity', get_class($entry));
         }
     }
 
@@ -79,20 +80,6 @@ class LogReaderTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(count($entries) > 0);
         foreach ($entries as $entry) {
             $this->assertNotInternalType('array', $entry);
-        }
-    }
-
-    public function testGetEntries2()
-    {
-        $reader = clone $this->reader;
-        $entries = $reader
-            ->addField('foo', 'bar')
-            ->getEntries();
-
-        $this->assertInternalType('array', $entries);
-        $this->assertTrue(count($entries) > 0);
-        foreach ($entries as $entry) {
-            $this->assertInternalType('array', $entry);
         }
     }
 
@@ -118,16 +105,4 @@ class LogReaderTest extends \PHPUnit_Framework_TestCase
         return $data;
     }
 
-    private static function parseDate($text)
-    {
-        $pattern = '/\[(\d{4}-\d{2}-\d{2}) \d{2}:\d{2}:\d{2}\].*/';
-        preg_match_all($pattern, $text, $matches);
-        return $matches[1][0];
-    }
-
-    private static function parseStack($text)
-    {
-        preg_match_all('/Stack trace:(.*)/s', $text, $matches);
-        return (isset($matches[1][0])) ? $matches[1][0] : null;
-    }
 }
